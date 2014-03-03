@@ -23,7 +23,6 @@ module.exports =
 
 		children:
 			type: 'array'
-			default: []
 
 		read:
 			type: 'array'
@@ -35,9 +34,26 @@ module.exports =
 
 	beforeCreate: (value,next) ->
 		value.fullName = value.path + '/' + value.name
-		#update parent if it exists
+		value.children = []
 		#recursively create all the children using a continuation
-		next()
+		createChildren = (childrenLeft) ->
+			if childrenLeft.length == 0
+				next()
+			else
+				childName = childrenLeft.pop()
+				child = value[childName]
+				child.name = childName
+				child.path = value.fullName
+				child.write = value.write
+				delete value[childName]
+				Doc.create(child).done (err,doc) ->
+					if err
+						console.log err
+					value.children.push doc.id
+					createChildren childrenLeft
+
+		childrenNames = (childName for childName of value when typeof value[childName] == 'object' and not Doc.attributes[childName])
+		createChildren childrenNames
 
 	afterCreate: (doc,next) ->
 		#update the parent if it exists
