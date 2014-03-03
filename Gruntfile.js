@@ -220,6 +220,12 @@ module.exports = function (grunt) {
             src: ['**/*.coffee'],
             dest: '.tmp/public/linker/js/',
             ext: '.js'
+          }, {
+            expand: true,
+            cwd: 'api/',
+            src: ['**/*.coffee'],
+            dest: 'api/',
+            ext: '.js'
           }
         ]
       }
