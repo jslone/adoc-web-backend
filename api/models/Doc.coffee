@@ -18,10 +18,23 @@ module.exports =
 			type: 'string'
 			required: true
 
-		attr:
-			type: 'array'
-			default: []
+		fullName:
+			type: 'string'
 
 		children:
 			type: 'array'
 			default: []
+
+		read:
+			type: 'array'
+			default: [/*/]
+
+		write:
+			type: 'array'
+			required: true
+
+	beforeCreate: (value,next) ->
+		value.fullName = value.path + '/' + value.name
+		#update parent if it exists
+		#recursively create all the children using a continuation
+		next()
