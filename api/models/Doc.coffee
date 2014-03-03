@@ -27,7 +27,7 @@ module.exports =
 
 		read:
 			type: 'array'
-			default: [/*/]
+			default: [/.*/]
 
 		write:
 			type: 'array'
@@ -38,3 +38,11 @@ module.exports =
 		#update parent if it exists
 		#recursively create all the children using a continuation
 		next()
+
+	afterCreate: (doc,next) ->
+		#update the parent if it exists
+		Doc.findOne(fullName : doc.path).done (err,parentDoc) ->
+			parentDoc?.children.push doc.id
+			parentDoc?.save (err) ->
+				console.log 'Error updating parentDoc:', err
+			next()
