@@ -20,6 +20,7 @@ module.exports =
 
 		fullName:
 			type: 'string'
+			unique: true
 
 		children:
 			type: 'array'
@@ -47,10 +48,13 @@ module.exports =
 				child.write = value.write
 				delete value[childName]
 				Doc.create(child).done (err,doc) ->
-					if err
+					if err or not doc?
 						console.log err
-					value.children.push doc.id
-					createChildren childrenLeft
+						delete value.children
+						next()
+					else
+						value.children.push doc.id
+						createChildren childrenLeft
 
 		childrenNames = (childName for childName of value when typeof value[childName] == 'object' and not Doc.attributes[childName])
 		createChildren childrenNames

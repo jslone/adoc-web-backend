@@ -16,4 +16,5 @@ module.exports = (req, res, next) ->
 
   # User is not allowed
   # (default res.forbidden() behavior can be overridden in `config/403.js`)
-  res.forbidden 'You must be logged in to perform this action.'
+  else
+    res.forbidden 'You must be logged in to perform this action.'

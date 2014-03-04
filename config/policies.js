@@ -19,7 +19,7 @@ module.exports.policies = {
   '*': true,
 
   DocController: {
-  	create: ['isAuthenticated'],
+  	create: ['isAuthenticated','canWrite'],
   	find: ['canRead']
   }
 
