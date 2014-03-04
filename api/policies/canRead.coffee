@@ -5,10 +5,10 @@
 	@description :: Check to see if the current user has read permissions
 					Only applies to Docs
 ###
+
 module.exports = (req,res,next) ->
 	if req.target.controller == 'doc'
 		key = null
-		console.log 'test'
 		if req.target.action == 'find'
 			if req.param('id')?
 				key = req.param('id')
@@ -16,22 +16,9 @@ module.exports = (req,res,next) ->
 			key = fullName: req.param[0]
 		if key isnt null
 			Doc.findOne(key).done (err,doc) ->
-				matched = false
-				if err or not doc?
-					matched = true
-					next()
-				else if "all" in doc.read
-					matched = true
+				if not doc? or doc.canRead req.user?.email
 					next()
 				else
-					for matcher in doc.read
-						if typeof matcher == 'string' and req.user?.username == matcher
-							matched = true
-							next()
-						if matcher instanceof RegExp and matcher.test req.user?.username
-							matched = true
-							next()
-				if not matched
 					res.forbidden 'You do not have permisson to read this doc.'
 		else
 			next()

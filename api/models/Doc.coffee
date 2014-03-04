@@ -6,6 +6,24 @@
 	@docs		:: http://sailsjs.org/#!documentation/models
 ###
 
+isAllowed = (username,permissions) ->
+	if 'all' in permissions
+		true
+	else
+		for pattern in permissions
+			regMatch = pattern.match /\/(.*)?\/([i|g|m]+)?/
+			if not regMatch?
+				if pattern == username
+					return true
+			else
+				regexp = if regMatch[2]? then new RegExp regMatch[1],regMatch[2] else new RegExp regMatch[1]
+				console.log username
+				console.log regMatch
+				console.log regexp.test username
+				if regexp.test username
+					return true
+		false
+
 module.exports =
 
 	attributes:
@@ -32,6 +50,12 @@ module.exports =
 		write:
 			type: 'array'
 			required: true
+
+		canRead: (username) ->
+			isAllowed username,@read
+
+		canWrite: (username) ->
+			isAllowed username,@write
 
 	beforeCreate: (value,next) ->
 		value.fullName = value.path + '/' + value.name
