@@ -26,7 +26,7 @@ module.exports =
 
 		read:
 			type: 'array'
-			default: [/.*/]
+			defaultsTo: ['all']
 
 		write:
 			type: 'array'
