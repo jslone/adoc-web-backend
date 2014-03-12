@@ -17,6 +17,15 @@
 
 module.exports =
 
+	#find by id, or all root items
+	find: (req,res) ->
+		if req.param('id')
+			Doc.findOne(id: req.param('id')).done (err,doc) ->
+				res.json doc
+		else
+			Doc.find(path: '/').done (err,docs) ->
+				res.json docs
+
 	#allows for lookup with a vanity url
 	lookup: (req,res) ->
 		url = req.params[0] # wildcard portion of route
@@ -26,17 +35,10 @@ module.exports =
 			else
 				res.json(doc)
 
-	children: (req,res) ->
-		Doc.findOne(req.param('id')).done (err,doc) ->
-			if not doc?
-				res.json []
-			else
-				Doc.find(id: doc.children).done (err,docs) ->
-					res.json docs
-	
+
 	# need to use this to default write to [currentUser], and authenticate updating the parent
-	#create: (req,res) -> 
-	
+	#create: (req,res) ->
+
 	###
 		Overrides for the settings in `config/controllers.js`
 		(specific to DocController)

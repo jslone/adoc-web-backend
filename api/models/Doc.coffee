@@ -58,7 +58,7 @@ module.exports =
 			isAllowed username,@write
 
 	beforeCreate: (value,next) ->
-		value.fullName = value.path + '/' + value.name
+		value.fullName = if value.path == '/' then value.name else value.path + '/' + value.name
 		value.children = []
 		#recursively create all the children using a continuation
 		createChildren = (childrenLeft) ->
@@ -77,7 +77,8 @@ module.exports =
 						delete value.children
 						next()
 					else
-						value.children.push doc.id
+						child = id: doc.id, name: doc.name, isLeaf: doc.children.length == 0
+						value.children.push child
 						createChildren childrenLeft
 
 		childrenNames = (childName for childName of value when typeof value[childName] == 'object' and not Doc.attributes[childName])
@@ -86,7 +87,8 @@ module.exports =
 	afterCreate: (doc,next) ->
 		#update the parent if it exists
 		Doc.findOne(fullName : doc.path).done (err,parentDoc) ->
-			parentDoc?.children.push doc.id
+			child = id: doc.id, name: doc.name, isLeaf: doc.children.length == 0
+			parentDoc?.children.push child
 			parentDoc?.save (err) ->
 				console.log 'Error updating parentDoc:', err
 			next()
