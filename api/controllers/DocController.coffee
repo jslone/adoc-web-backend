@@ -25,6 +25,14 @@ module.exports =
 				res.json err: err
 			else
 				res.json(doc)
+
+	children: (req,res) ->
+		Doc.findOne(req.param('id')).done (err,doc) ->
+			if not doc?
+				res.json []
+			else
+				Doc.find(id: doc.children).done (err,docs) ->
+					res.json docs
 	
 	# need to use this to default write to [currentUser], and authenticate updating the parent
 	#create: (req,res) -> 

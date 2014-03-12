@@ -33,10 +33,11 @@ module.exports.routes = {
   // 
   // (This would also work if you had a file at: `/views/home.ejs`)
   '/': {
-    view: 'home/index'
+    view: 'index'
   },
 
-  '/doc/v/*' : 'DocController.lookup'
+  '/doc/v/*' : 'DocController.lookup',
+  '/doc/children/:id' : 'DocController.children'
 
   /*
   // But what if you want your home page to display
