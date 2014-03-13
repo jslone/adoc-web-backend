@@ -9,8 +9,8 @@ findById = (id,callback) ->
 		else
 			callback null,user
 
-findByEmail = (username,callback) ->
-	User.findOne(email: username).done (err,user) ->
+findByEmail = (email,callback) ->
+	User.findOne(email: email).done (err,user) ->
 		if err
 			callback null,null
 		else
@@ -22,16 +22,16 @@ passport.serializeUser (user,done) ->
 passport.deserializeUser (id,done) ->
 	findById id,done
 
-passport.use new LocalStrategy (username, password, done) ->
-	findByEmail username, (err,user) ->
+passport.use new LocalStrategy usernameField: 'email', (email, password, done) ->
+	findByEmail email, (err,user) ->
 		if err
-			done null,err
+			done true,err
 		# these messages probably shouldn't be different in prod
 		else if not user?
-			done null,false, message: 'Unknown user ' + username
+			done true,false, message: 'Unknown user ' + email
 		else
 			bcrypt.compare password,user.password, (err,res) ->
 				if !res
-					done null,false,message: 'Invalid password'
+					done true,false,message: 'Invalid password'
 				else
 					done null,user,message: 'Login successful'
