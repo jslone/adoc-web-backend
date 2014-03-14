@@ -33,8 +33,16 @@ module.exports =
 			if err
 				res.json err: err
 			else
-				res.json(doc)
+				res.json doc
 
+	search: (req,res) ->
+		args = req.query?.query?.split(' ').map (str) ->
+			fullName: contains: str
+		query = or: args
+
+		#works with sails-mongo 9.6+, sails-disk 9.1+
+		Doc.find(query).done (err,docs) ->
+			res.json docs
 
 	# need to use this to default write to [currentUser], and authenticate updating the parent
 	#create: (req,res) ->
